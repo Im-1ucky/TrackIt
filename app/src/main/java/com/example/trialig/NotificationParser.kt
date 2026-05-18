@@ -1,0 +1,39 @@
+package com.example.trialig
+
+object NotificationParser {
+
+    fun parse(message: String): TransactionNode? {
+
+        val lower = message.lowercase()
+
+        val type =
+            when {
+                "debited" in lower -> "debit"
+                "credited" in lower -> "credit"
+                else -> return null
+            }
+
+        val amountRegex =
+            Regex(
+                """(?:rs\.?|rs:|inr|₹)\s*([\d,]+(?:\.\d+)?)""",
+                RegexOption.IGNORE_CASE
+            )
+
+        val amountMatch =
+            amountRegex.find(lower)
+
+        val amount =
+            amountMatch
+                ?.groupValues
+                ?.get(1)
+                ?.replace(",", "")
+                ?.toDoubleOrNull()
+                ?: return null
+
+        return NodeFactory.createNode(
+            amount = amount,
+            type = type,
+            message = message
+        )
+    }
+}
