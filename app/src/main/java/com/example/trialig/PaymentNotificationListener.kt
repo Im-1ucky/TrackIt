@@ -73,13 +73,50 @@ class PaymentNotificationListener :
                             applicationContext
                         )
 
-                    db.transactionDao()
-                        .insertTransaction(node)
+                    val existing =
+                        db.transactionDao()
+                            .getLatestByMessage(
+                                node.message
+                            )
 
-                    Log.d(
-                        "Database",
-                        "Transaction saved"
-                    )
+                    val isDuplicate =
+                        existing != null &&
+                                (
+                                        node.timestamp -
+                                                existing.timestamp
+                                        ) < 5000
+
+                    if (!isDuplicate) {
+
+                        db.transactionDao()
+                            .insertTransaction(node)
+
+                        Log.d(
+                            "Database",
+                            "Transaction saved"
+                        )
+                    }
+                    else {
+
+                        Log.d(
+                            "Database",
+                            "Duplicate skipped"
+                        )
+                    }
+
+                    val transactions =
+                        db.transactionDao()
+                            .getAllTransactions()
+
+                    transactions.forEach {
+
+                        Log.d(
+                            "Database",
+                            it.toString()
+                        )
+                    }
+
+
                 }
             }
         }

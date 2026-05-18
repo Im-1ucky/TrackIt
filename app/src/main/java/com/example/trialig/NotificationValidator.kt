@@ -1,10 +1,13 @@
 package com.example.trialig
+import android.util.Log
 
 object NotificationValidator {
 
     private val trustedPackages = listOf(
 
         "com.phonepe.app",
+
+        "com.example.trialig",
 
         "com.google.android.apps.messaging",
 
@@ -102,6 +105,13 @@ object NotificationValidator {
         var score = 0
 
         if (
+            title.isBlank() &&
+            message.isBlank()
+        ) {
+            return false
+        }
+
+        if (
             trustedPackages.any {
                 it == packageName
             }
@@ -136,8 +146,10 @@ object NotificationValidator {
         }
 
         val hasAmount =
-            Regex("""\d+""")
-                .containsMatchIn(lowerMessage)
+            Regex(
+                """(?:rs\.?|rs:|inr|₹)\s*\d+""",
+                RegexOption.IGNORE_CASE
+            ).containsMatchIn(lowerMessage)
 
         if (hasAmount) {
             score += 3
@@ -152,6 +164,16 @@ object NotificationValidator {
             score -= 4
         }
 
-        return score >= 5
+        Log.d(
+            "Validator",
+            "Score: $score"
+        )
+
+        Log.d(
+            "Validator",
+            "Valid: ${score >= 6}"
+        )
+
+        return score >= 6
     }
 }
