@@ -1,12 +1,9 @@
 package com.example.trialig
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
+
+import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -15,7 +12,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import androidx.compose.material3.Surface
 
 @Composable
 fun DebugNotificationScreen(
@@ -26,59 +30,60 @@ fun DebugNotificationScreen(
         mutableIntStateOf(1)
     }
 
-    val launcher =
-        rememberLauncherForActivityResult(
-            contract =
-                ActivityResultContracts.RequestPermission()
-        ) { }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
+        Column(
 
-        Button(
+            modifier = Modifier.fillMaxSize(),
 
-            onClick = {
+            verticalArrangement =
+                Arrangement.Center,
 
-                val title =
-                    "Union Bank Of India"
+            horizontalAlignment =
+                Alignment.CenterHorizontally
+        ) {
+            fun buildMessage(
+                type: String
+            ): String {
 
-                val message =
-                    "A/c *2023 Debited for Rs:448.00 on 02-05-2026 10:57:10 by Mob Bk ref no 123412341234 Avl Bal Rs 123.07. If not you, Call 1800222243 -Union Bank of India"
+                val ref =
+                    (100000000000..999999999999)
+                        .random()
 
-                if (
-                    Build.VERSION.SDK_INT >=
-                    Build.VERSION_CODES.TIRAMISU
+                val time =
+                    System.currentTimeMillis()
+
+                return if (
+                    type == "credit"
                 ) {
 
-                    when {
-
-                        ContextCompat.checkSelfPermission(
-                            activity,
-                            Manifest.permission
-                                .POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED -> {
-
-                            sendTestNotification(
-                                context = activity,
-                                notificationId =
-                                    notificationId.intValue++,
-                                title = title,
-                                message = message
-                            )
-                        }
-
-                        else -> {
-
-                            launcher.launch(
-                                Manifest.permission
-                                    .POST_NOTIFICATIONS
-                            )
-                        }
-                    }
+                    "A/c *2023 Credited for Rs:448.00 " +
+                            "on $time by Mob Bk ref no $ref " +
+                            "Avl Bal Rs 123.07. " +
+                            "-Union Bank of India"
 
                 } else {
+
+                    "A/c *2023 Debited for Rs:448.00 " +
+                            "on $time by Mob Bk ref no $ref " +
+                            "Avl Bal Rs 123.07. " +
+                            "-Union Bank of India"
+                }
+            }
+
+            Button(
+
+                onClick = {
+
+                    val title =
+                        "Union Bank Of India"
+
+                    val message =
+                        buildMessage(
+                            "debit"
+                        )
 
                     sendTestNotification(
                         context = activity,
@@ -88,12 +93,77 @@ fun DebugNotificationScreen(
                         message = message
                     )
                 }
-            }
-        ) {
+            ) {
 
-            Text(
-                "Send Notification"
+                Text(
+                    "Send Debit"
+                )
+            }
+
+            Spacer(
+                modifier = Modifier.height(
+                    24.dp
+                )
             )
+
+            Button(
+
+                onClick = {
+
+                    val title =
+                        "Union Bank Of India"
+
+                    val message =
+                        buildMessage(
+                            "credit"
+                        )
+
+                    sendTestNotification(
+                        context = activity,
+                        notificationId =
+                            notificationId.intValue++,
+                        title = title,
+                        message = message
+                    )
+                }
+            ) {
+
+                Text(
+                    "Send Credit"
+                )
+            }
+
+            Spacer(
+                modifier = Modifier.height(
+                    24.dp
+                )
+            )
+
+            Button(
+
+                onClick = {
+
+                    CoroutineScope(
+                        Dispatchers.IO
+                    ).launch {
+
+                        DatabaseProvider
+                            .getDatabase(activity)
+                            .transactionDao()
+                            .deleteAllTransactions()
+
+                        Log.d(
+                            "Database",
+                            "All transactions deleted"
+                        )
+                    }
+                }
+            ) {
+
+                Text(
+                    "Delete All Nodes"
+                )
+            }
         }
     }
 }

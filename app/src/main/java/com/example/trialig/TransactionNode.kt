@@ -15,5 +15,9 @@ data class TransactionNode(
 
     val message: String,
 
-    val timestamp: Long
+    val timestamp: Long,
+    val parentId: Int? = null,
+    val branchName: String = "main",
+    val status: String = "REGULAR",
+    val transactionRef: String? = null
 )

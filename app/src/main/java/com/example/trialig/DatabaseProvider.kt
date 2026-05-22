@@ -17,6 +17,8 @@ object DatabaseProvider {
                 context,
                 AppDatabase::class.java,
                 "payment_git_history"
+            ).fallbackToDestructiveMigration(
+                true
             ).build()
         }
 

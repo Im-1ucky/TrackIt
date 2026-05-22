@@ -75,16 +75,12 @@ class PaymentNotificationListener :
 
                     val existing =
                         db.transactionDao()
-                            .getLatestByMessage(
-                                node.message
+                            .getByTransactionRef(
+                                node.transactionRef ?: ""
                             )
 
                     val isDuplicate =
-                        existing != null &&
-                                (
-                                        node.timestamp -
-                                                existing.timestamp
-                                        ) < 5000
+                        existing != null
 
                     if (!isDuplicate) {
 

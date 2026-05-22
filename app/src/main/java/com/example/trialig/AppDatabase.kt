@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [TransactionNode::class],
-    version = 1
+    version = 3
 )
 abstract class AppDatabase :
     RoomDatabase() {

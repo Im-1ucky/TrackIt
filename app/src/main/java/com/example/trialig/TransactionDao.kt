@@ -25,12 +25,17 @@ interface TransactionDao {
     )
 
     @Query(
+        "DELETE FROM transactions"
+    )
+    suspend fun deleteAllTransactions()
+
+    @Query(
         "SELECT * FROM transactions " +
-                "WHERE message = :message " +
-                "ORDER BY timestamp DESC " +
+                "WHERE transactionRef = :ref " +
                 "LIMIT 1"
     )
-    suspend fun getLatestByMessage(
-        message: String
+    suspend fun getByTransactionRef(
+        ref: String
     ): TransactionNode?
+
 }

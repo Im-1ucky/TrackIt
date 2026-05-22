@@ -13,6 +13,12 @@ object NotificationParser {
                 else -> return null
             }
 
+        val refRegex =
+            Regex(
+                """ref\s*(?:no|number)?\s*(\d+)""",
+                RegexOption.IGNORE_CASE
+            )
+
         val amountRegex =
             Regex(
                 """(?:rs\.?|rs:|inr|₹)\s*([\d,]+(?:\.\d+)?)""",
@@ -30,10 +36,17 @@ object NotificationParser {
                 ?.toDoubleOrNull()
                 ?: return null
 
+        val transactionRef =
+            refRegex
+                .find(message)
+                ?.groupValues
+                ?.getOrNull(1)
+
         return NodeFactory.createNode(
             amount = amount,
             type = type,
-            message = message
+            message = message,
+            transactionRef = transactionRef
         )
     }
 }

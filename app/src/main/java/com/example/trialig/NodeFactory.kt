@@ -5,14 +5,16 @@ object NodeFactory {
     fun createNode(
         amount: Double,
         type: String,
-        message: String
+        message: String,
+        transactionRef: String?
     ): TransactionNode {
 
         return TransactionNode(
             amount = amount,
             type = type,
             message = message,
-            timestamp = System.currentTimeMillis()
+            timestamp = System.currentTimeMillis(),
+            transactionRef = transactionRef,
         )
     }
 }
