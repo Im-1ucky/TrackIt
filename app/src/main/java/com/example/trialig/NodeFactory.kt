@@ -6,7 +6,8 @@ object NodeFactory {
         amount: Double,
         type: String,
         message: String,
-        transactionRef: String?
+        transactionRef: String?,
+        availableBalance: Double?
     ): TransactionNode {
 
         return TransactionNode(
@@ -15,6 +16,7 @@ object NodeFactory {
             message = message,
             timestamp = System.currentTimeMillis(),
             transactionRef = transactionRef,
+            availableBalance = availableBalance,
         )
     }
 }

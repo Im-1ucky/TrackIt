@@ -6,6 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import com.example.trialig.ui.theme.TrialigTheme
+import kotlinx.coroutines.runBlocking
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
 
@@ -19,31 +24,58 @@ class MainActivity : ComponentActivity() {
 
             TrialigTheme {
 
-                val pagerState =
-                    rememberPagerState(
-                        pageCount = { 2 }
-                    )
+                val rootExists =
+                    runBlocking {
 
-                HorizontalPager(
-                    state = pagerState
-                ) { page ->
-
-                    when(page) {
-
-                        0 -> {
-
-                            DebugNotificationScreen(
-                                activity = this@MainActivity
+                        DatabaseProvider
+                            .getDatabase(
+                                this@MainActivity
                             )
-                        }
+                            .transactionDao()
+                            .getRootNode() != null
+                    }
 
-                        1 -> {
+                var setupComplete by remember {
+                    mutableStateOf(false)
+                }
 
-                            GraphScreen(
-                                activity = this@MainActivity
-                            )
+                if (rootExists || setupComplete) {
+
+                    val pagerState =
+                        rememberPagerState(
+                            pageCount = { 2 }
+                        )
+
+                    HorizontalPager(
+                        state = pagerState
+                    ) { page ->
+
+                        when(page) {
+
+                            0 -> {
+
+                                DebugNotificationScreen(
+                                    activity = this@MainActivity
+                                )
+                            }
+
+                            1 -> {
+
+                                GraphScreen(
+                                    activity = this@MainActivity
+                                )
+                            }
                         }
                     }
+
+                } else {
+
+                    SetupScreen(
+                        activity = this@MainActivity,
+                        onContinue = {
+                            setupComplete = true
+                        }
+                    )
                 }
             }
         }

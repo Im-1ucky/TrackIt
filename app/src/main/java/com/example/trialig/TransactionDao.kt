@@ -34,8 +34,15 @@ interface TransactionDao {
                 "WHERE transactionRef = :ref " +
                 "LIMIT 1"
     )
+
     suspend fun getByTransactionRef(
         ref: String
     ): TransactionNode?
+
+    @Query(
+        "SELECT * FROM transactions WHERE type = 'ROOT' LIMIT 1"
+    )
+    suspend fun getRootNode():
+            TransactionNode?
 
 }

@@ -15,6 +15,7 @@ object GraphBuilder {
                 type = it.type,
                 branchName = it.branchName,
                 status = it.status,
+                timestamp = it.timestamp,
                 depth = 0
             )
         }

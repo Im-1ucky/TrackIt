@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.runBlocking
+import androidx.compose.material3.Surface
 
 @Composable
 fun GraphScreen(
@@ -34,16 +35,21 @@ fun GraphScreen(
             transactions
         )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(
-                scrollState
-            )
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        TreeCanvas(
-            nodes = graph
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(
+                    scrollState
+                )
+        ) {
+
+            TreeCanvas(
+                nodes = graph
+            )
+        }
     }
 }

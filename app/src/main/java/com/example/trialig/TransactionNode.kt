@@ -19,5 +19,6 @@ data class TransactionNode(
     val parentId: Int? = null,
     val branchName: String = "main",
     val status: String = "REGULAR",
-    val transactionRef: String? = null
+    val transactionRef: String? = null,
+    val availableBalance: Double? = null
 )

@@ -25,7 +25,10 @@ fun TreeCanvas(
         modifier = Modifier
             .fillMaxWidth()
             .height(
-                (nodes.size * 250).dp
+                maxOf(
+                    1000,
+                    nodes.size * 250
+                ).dp
             )
     ) {
 
@@ -37,13 +40,25 @@ fun TreeCanvas(
             color = backgroundColor
         )
 
+        val latestIndex =
+            nodes.lastIndex
+
+        val centerY =
+            size.height / 2f
+
+        val formatter =
+            java.text.SimpleDateFormat(
+                "dd MMM HH:mm",
+                java.util.Locale.getDefault()
+            )
+
         nodes.forEachIndexed { index, node ->
 
 
             val y =
-                120f + (
-                        index * verticalSpacing
-                        )
+                centerY +
+                        (index - latestIndex) *
+                        verticalSpacing
 
             val isDark =
                 backgroundColor.luminance() < 0.5f
@@ -64,10 +79,9 @@ fun TreeCanvas(
             if (index > 0) {
 
                 val previousY =
-                    120f + (
-                            (index - 1) *
-                                    verticalSpacing
-                            )
+                    centerY +
+                            ((index - 1) - latestIndex) *
+                            verticalSpacing
 
                 drawLine(
 

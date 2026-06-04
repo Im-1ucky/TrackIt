@@ -25,6 +25,19 @@ object NotificationParser {
                 RegexOption.IGNORE_CASE
             )
 
+        val balanceRegex =
+            Regex(
+                """avl\s*bal\s*rs[:\s]*(\d+(?:\.\d+)?)""",
+                RegexOption.IGNORE_CASE
+            )
+
+        val availableBalance =
+            balanceRegex
+                .find(message)
+                ?.groupValues
+                ?.getOrNull(1)
+                ?.toDoubleOrNull()
+
         val amountMatch =
             amountRegex.find(lower)
 
@@ -46,7 +59,8 @@ object NotificationParser {
             amount = amount,
             type = type,
             message = message,
-            transactionRef = transactionRef
+            transactionRef = transactionRef,
+            availableBalance = availableBalance
         )
     }
 }
