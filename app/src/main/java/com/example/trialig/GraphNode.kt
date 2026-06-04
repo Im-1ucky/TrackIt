@@ -10,4 +10,5 @@ data class GraphNode(
     val status: String,
     val timestamp: Long,
     val depth: Int
+
 )

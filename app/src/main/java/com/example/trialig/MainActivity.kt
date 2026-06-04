@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
                     val pagerState =
                         rememberPagerState(
-                            pageCount = { 2 }
+                            pageCount = { 3 }
                         )
 
                     HorizontalPager(
@@ -52,19 +52,19 @@ class MainActivity : ComponentActivity() {
 
                         when(page) {
 
-                            0 -> {
+                            0 -> DebugNotificationScreen(
+                                activity = this@MainActivity
+                            )
 
-                                DebugNotificationScreen(
-                                    activity = this@MainActivity
-                                )
-                            }
+                            1 -> TreeScreen(
+                                activity = this@MainActivity,
+                                treeType = TreeType.BALANCE
+                            )
 
-                            1 -> {
-
-                                GraphScreen(
-                                    activity = this@MainActivity
-                                )
-                            }
+                            2 -> TreeScreen(
+                                activity = this@MainActivity,
+                                treeType = TreeType.SPENDING
+                            )
                         }
                     }
 

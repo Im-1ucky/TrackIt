@@ -1,12 +1,13 @@
 package com.example.trialig
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.layout.height
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.material3.MaterialTheme
@@ -15,11 +16,8 @@ import androidx.compose.ui.graphics.luminance
 @Composable
 fun TreeCanvas(
     nodes: List<GraphNode>
-
 ) {
-
-    val backgroundColor =
-        MaterialTheme.colorScheme.background
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     Canvas(
         modifier = Modifier
@@ -31,14 +29,13 @@ fun TreeCanvas(
                 ).dp
             )
     ) {
-
         val startX = size.width / 2
-
+        val isDark = backgroundColor.luminance() < 0.5f
+        val graphColor = if (isDark) Color.White else Color.Black
         val verticalSpacing = 250f
 
-        drawRect(
-            color = backgroundColor
-        )
+        drawRect(color = backgroundColor)
+
 
         val latestIndex =
             nodes.lastIndex
@@ -46,37 +43,17 @@ fun TreeCanvas(
         val centerY =
             size.height / 2f
 
-        val formatter =
-            java.text.SimpleDateFormat(
-                "dd MMM HH:mm",
-                java.util.Locale.getDefault()
-            )
-
         nodes.forEachIndexed { index, node ->
-
-
             val y =
                 centerY +
                         (index - latestIndex) *
                         verticalSpacing
 
-            val isDark =
-                backgroundColor.luminance() < 0.5f
+            Log.d("TREE_NODE", "index=$index y=$y amount=${node.amount}")
 
-            val graphColor =
-
-                if (isDark) {
-
-                    Color.White
-
-                } else {
-
-                    Color.Black
-                }
-
-            // DRAW LINE FIRST
-
+            // line between nodes
             if (index > 0) {
+                val nodeRadius = 45f
 
                 val previousY =
                     centerY +
@@ -84,78 +61,53 @@ fun TreeCanvas(
                             verticalSpacing
 
                 drawLine(
-
                     color = graphColor,
-
                     start = Offset(
                         startX,
-                        previousY + 45f
+                        previousY + nodeRadius
                     ),
-
                     end = Offset(
                         startX,
-                        y - 45f
+                        y - nodeRadius
                     ),
-
-                    strokeWidth = 12f
+                    strokeWidth = 6f
                 )
             }
 
-            // OUTER NODE
-
+            // outer node
             drawCircle(
-
-                color = graphColor.copy(
-                    alpha = 0.25f
-                ),
-
+                color = graphColor.copy(alpha = 0.25f),
                 radius = 58f,
-
-                center = Offset(
-                    startX,
-                    y
-                )
+                center = Offset(startX, y)
             )
 
-            // INNER NODE
-
+            // inner node
             drawCircle(
-
                 color = graphColor,
-
                 radius = 45f,
-
-                center = Offset(
-                    startX,
-                    y
-                )
+                center = Offset(startX, y)
             )
 
-            // TEXT
-
+            // amount text
             drawContext.canvas.nativeCanvas.drawText(
-
                 "₹${node.amount.toInt()}",
-
                 startX + 90f,
-
-                y + 12f,
-
+                y - 8f,
                 android.graphics.Paint().apply {
-
-                    color =
-
-                        if (isDark) {
-
-                            android.graphics.Color.WHITE
-
-                        } else {
-
-                            android.graphics.Color.BLACK
-                        }
-
+                    color = if (isDark) android.graphics.Color.WHITE else android.graphics.Color.BLACK
                     textSize = 44f
+                    isAntiAlias = true
+                }
+            )
 
+            // date text
+            drawContext.canvas.nativeCanvas.drawText(
+                DateFormatter.format(node.timestamp),
+                startX + 90f,
+                y + 38f,
+                android.graphics.Paint().apply {
+                    color = if (isDark) android.graphics.Color.LTGRAY else android.graphics.Color.DKGRAY
+                    textSize = 28f
                     isAntiAlias = true
                 }
             )
